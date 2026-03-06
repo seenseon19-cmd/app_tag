@@ -103,70 +103,71 @@ class PdfService {
         margin: const pw.EdgeInsets.all(40),
         theme: pw.ThemeData.withFont(base: arabicFont, bold: arabicFont),
         build: (context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              // Header
-              _buildSingleClientHeader(client, arabicFont),
-              pw.SizedBox(height: 24),
+          return pw.Directionality(
+            textDirection: pw.TextDirection.rtl,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+              children: [
+                // Header
+                _buildSingleClientHeader(client, arabicFont),
+                pw.SizedBox(height: 24),
 
-              // Client Info
-              _buildSectionTitle('معلومات العميل', arabicFont),
-              pw.SizedBox(height: 8),
-              _buildInfoRow('الاسم الكامل', client.fullName, arabicFont),
-              _buildInfoRow('رقم الهاتف', client.phone, arabicFont),
-              _buildInfoRow('الرقم الوطني', client.nationalId, arabicFont),
-              _buildInfoRow(
-                  'رقم البطاقة البنكية', client.bankCardNumber, arabicFont),
-              if (client.bankName != null && client.bankName!.isNotEmpty)
-                _buildInfoRow('المصرف', client.bankName!, arabicFont),
-              _buildInfoRow('تاريخ الشراء',
-                  Formatters.date(client.purchaseDate), arabicFont),
-              if (client.note != null && client.note!.isNotEmpty)
-                _buildInfoRow('ملاحظة', client.note!, arabicFont),
+                // Client Info
+                _buildSectionTitle('معلومات العميل', arabicFont),
+                pw.SizedBox(height: 8),
+                _buildInfoRow('الاسم الكامل', client.fullName, arabicFont),
+                _buildInfoRow('رقم الهاتف', client.phone, arabicFont),
+                _buildInfoRow('الرقم الوطني', client.nationalId, arabicFont),
+                _buildInfoRow('رقم البطاقة البنكية', client.bankCardNumber, arabicFont),
+                if (client.bankName != null && client.bankName!.isNotEmpty)
+                  _buildInfoRow('المصرف', client.bankName!, arabicFont),
+                _buildInfoRow('تاريخ الشراء', Formatters.date(client.purchaseDate), arabicFont),
+                if (client.note != null && client.note!.isNotEmpty)
+                  _buildInfoRow('ملاحظة', client.note!, arabicFont),
 
-              pw.SizedBox(height: 20),
+                pw.SizedBox(height: 20),
 
-              // Financial Info
-              _buildSectionTitle('المعلومات المالية', arabicFont),
-              pw.SizedBox(height: 8),
-              _buildFinancialBox(client, currencySymbol, arabicFont),
+                // Financial Info
+                _buildSectionTitle('المعلومات المالية', arabicFont),
+                pw.SizedBox(height: 8),
+                _buildFinancialBox(client, currencySymbol, arabicFont),
 
-              pw.Spacer(),
+                pw.Spacer(),
 
-              // Footer
-              pw.Container(
-                padding: const pw.EdgeInsets.only(top: 10),
-                decoration: const pw.BoxDecoration(
-                  border: pw.Border(
-                    top: pw.BorderSide(
-                      color: PdfColor.fromInt(0xFFDDDDDD),
+                // Footer
+                pw.Container(
+                  padding: const pw.EdgeInsets.only(top: 10),
+                  decoration: const pw.BoxDecoration(
+                    border: pw.Border(
+                      top: pw.BorderSide(
+                        color: PdfColor.fromInt(0xFFDDDDDD),
+                      ),
                     ),
                   ),
-                ),
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text(
-                      Formatters.dateTime(DateTime.now()),
-                      style: pw.TextStyle(
-                        font: arabicFont,
-                        fontSize: 8,
-                        color: const PdfColor.fromInt(0xFF999999),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        'تاج الصرافة - سري',
+                        style: pw.TextStyle(
+                          font: arabicFont,
+                          fontSize: 8,
+                          color: const PdfColor.fromInt(0xFF999999),
+                        ),
                       ),
-                    ),
-                    pw.Text(
-                      'تاج الصرافة - سري',
-                      style: pw.TextStyle(
-                        font: arabicFont,
-                        fontSize: 8,
-                        color: const PdfColor.fromInt(0xFF999999),
+                      pw.Text(
+                        Formatters.dateTime(DateTime.now()),
+                        style: pw.TextStyle(
+                          font: arabicFont,
+                          fontSize: 8,
+                          color: const PdfColor.fromInt(0xFF999999),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
@@ -175,8 +176,7 @@ class PdfService {
     return pdf;
   }
 
-  static pw.Widget _buildSingleClientHeader(
-      Client client, pw.Font arabicFont) {
+  static pw.Widget _buildSingleClientHeader(Client client, pw.Font arabicFont) {
     return pw.Container(
       padding: const pw.EdgeInsets.only(bottom: 16),
       decoration: const pw.BoxDecoration(
@@ -190,6 +190,26 @@ class PdfService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
+          // يمين: التاريخ واسم العميل
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                'التاريخ: ${Formatters.date(DateTime.now())}',
+                style: pw.TextStyle(font: arabicFont, fontSize: 10),
+              ),
+              pw.SizedBox(height: 4),
+              pw.Text(
+                client.fullName,
+                style: pw.TextStyle(
+                  font: arabicFont,
+                  fontSize: 12,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          // يسار: اسم الشركة
           pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.end,
             children: [
@@ -213,24 +233,6 @@ class PdfService {
               ),
             ],
           ),
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                'التاريخ: ${Formatters.date(DateTime.now())}',
-                style: pw.TextStyle(font: arabicFont, fontSize: 10),
-              ),
-              pw.SizedBox(height: 4),
-              pw.Text(
-                client.fullName,
-                style: pw.TextStyle(
-                  font: arabicFont,
-                  fontSize: 12,
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -247,6 +249,7 @@ class PdfService {
       child: pw.Text(
         title,
         textDirection: pw.TextDirection.rtl,
+        textAlign: pw.TextAlign.right,
         style: pw.TextStyle(
           font: arabicFont,
           fontSize: 13,
@@ -257,8 +260,7 @@ class PdfService {
     );
   }
 
-  static pw.Widget _buildInfoRow(
-      String label, String value, pw.Font arabicFont) {
+  static pw.Widget _buildInfoRow(String label, String value, pw.Font arabicFont) {
     return pw.Container(
       padding: const pw.EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: const pw.BoxDecoration(
@@ -269,16 +271,10 @@ class PdfService {
         ),
       ),
       child: pw.Row(
+        // RTL: التسمية على اليمين، القيمة على اليسار
         children: [
-          pw.Expanded(
-            child: pw.Text(
-              value,
-              textDirection: pw.TextDirection.rtl,
-              style: pw.TextStyle(font: arabicFont, fontSize: 10),
-            ),
-          ),
           pw.SizedBox(
-            width: 130,
+            width: 140,
             child: pw.Text(
               label,
               textDirection: pw.TextDirection.rtl,
@@ -291,13 +287,28 @@ class PdfService {
               ),
             ),
           ),
+          pw.Text(
+            ':  ',
+            style: pw.TextStyle(
+              font: arabicFont,
+              fontSize: 10,
+              color: const PdfColor.fromInt(0xFFAAAAAA),
+            ),
+          ),
+          pw.Expanded(
+            child: pw.Text(
+              value,
+              textDirection: pw.TextDirection.rtl,
+              textAlign: pw.TextAlign.right,
+              style: pw.TextStyle(font: arabicFont, fontSize: 10),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  static pw.Widget _buildFinancialBox(
-      Client client, String symbol, pw.Font arabicFont) {
+  static pw.Widget _buildFinancialBox(Client client, String symbol, pw.Font arabicFont) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(16),
       decoration: pw.BoxDecoration(
@@ -309,26 +320,32 @@ class PdfService {
       child: pw.Column(
         children: [
           pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
             children: [
-              _buildFinancialItem(
-                'الإيداع',
-                Formatters.currency(client.deposit, symbol: symbol),
-                const PdfColor.fromInt(0xFFFF9800),
-                arabicFont,
-              ),
               _buildFinancialItem(
                 'سعر الشراء',
                 Formatters.currency(client.purchasePrice, symbol: symbol),
                 const PdfColor.fromInt(0xFF333333),
                 arabicFont,
               ),
+              _buildFinancialItem(
+                'الإيداع',
+                Formatters.currency(client.deposit, symbol: symbol),
+                const PdfColor.fromInt(0xFFFF9800),
+                arabicFont,
+              ),
             ],
           ),
           pw.SizedBox(height: 12),
           pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
             children: [
+              _buildFinancialItem(
+                'مبلغ الدولار',
+                Formatters.currency(client.dollarAmount, symbol: r'$'),
+                const PdfColor.fromInt(0xFF2196F3),
+                arabicFont,
+              ),
               _buildFinancialItem(
                 'سعر الصرف',
                 client.exchangeRate != null
@@ -337,42 +354,39 @@ class PdfService {
                 const PdfColor.fromInt(0xFF9C27B0),
                 arabicFont,
               ),
-              _buildFinancialItem(
-                'مبلغ الدولار',
-                Formatters.currency(client.dollarAmount, symbol: '\$'),
-                const PdfColor.fromInt(0xFF2196F3),
-                arabicFont,
-              ),
             ],
           ),
           pw.SizedBox(height: 12),
-          // Profit row (highlighted)
+          // صف الربح (بارز)
           pw.Container(
-            padding: const pw.EdgeInsets.all(10),
+            width: double.infinity,
+            padding: const pw.EdgeInsets.all(12),
             decoration: pw.BoxDecoration(
-              color: const PdfColor.fromInt(0xFFE8F5E9),
-              borderRadius:
-                  const pw.BorderRadius.all(pw.Radius.circular(4)),
+              color: client.profit >= 0
+                  ? const PdfColor.fromInt(0xFFE8F5E9)
+                  : const PdfColor.fromInt(0xFFFFEBEE),
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
             ),
-            child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.center,
+            child: pw.Column(
               children: [
                 pw.Text(
-                  'الربح: ',
+                  'الربح الصافي',
                   textDirection: pw.TextDirection.rtl,
+                  textAlign: pw.TextAlign.center,
                   style: pw.TextStyle(
                     font: arabicFont,
-                    fontSize: 11,
-                    fontWeight: pw.FontWeight.bold,
-                    color: const PdfColor.fromInt(0xFF4CAF50),
+                    fontSize: 10,
+                    color: const PdfColor.fromInt(0xFF666666),
                   ),
                 ),
+                pw.SizedBox(height: 4),
                 pw.Text(
                   Formatters.currency(client.profit, symbol: 'د.ل'),
                   textDirection: pw.TextDirection.rtl,
+                  textAlign: pw.TextAlign.center,
                   style: pw.TextStyle(
                     font: arabicFont,
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: pw.FontWeight.bold,
                     color: client.profit >= 0
                         ? const PdfColor.fromInt(0xFF4CAF50)
@@ -395,16 +409,18 @@ class PdfService {
         pw.Text(
           label,
           textDirection: pw.TextDirection.rtl,
+          textAlign: pw.TextAlign.center,
           style: pw.TextStyle(
             font: arabicFont,
             fontSize: 9,
             color: const PdfColor.fromInt(0xFF888888),
           ),
         ),
-        pw.SizedBox(height: 2),
+        pw.SizedBox(height: 4),
         pw.Text(
           value,
           textDirection: pw.TextDirection.rtl,
+          textAlign: pw.TextAlign.center,
           style: pw.TextStyle(
             font: arabicFont,
             fontSize: 14,
@@ -431,12 +447,15 @@ class PdfService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
+          // يمين: التاريخ
           pw.Text(
             Formatters.date(DateTime.now()),
             style: pw.TextStyle(font: arabicFont, fontSize: 10),
           ),
+          // وسط: العنوان
           pw.Text(
             'تاج الصرافة - جميع المعاملات',
+            textDirection: pw.TextDirection.rtl,
             style: pw.TextStyle(
               font: arabicFont,
               fontSize: 18,
@@ -461,7 +480,7 @@ class PdfService {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            'صفحة ${context.pageNumber} / ${context.pagesCount}',
+            'تاج الصرافة - سري',
             style: pw.TextStyle(
               font: arabicFont,
               fontSize: 8,
@@ -469,7 +488,7 @@ class PdfService {
             ),
           ),
           pw.Text(
-            'تاج الصرافة - سري',
+            'صفحة ${context.pageNumber} / ${context.pagesCount}',
             style: pw.TextStyle(
               font: arabicFont,
               fontSize: 8,
@@ -481,8 +500,7 @@ class PdfService {
     );
   }
 
-  static pw.Widget _buildAllClientsSummary(
-      List<Client> clients, pw.Font arabicFont) {
+  static pw.Widget _buildAllClientsSummary(List<Client> clients, pw.Font arabicFont) {
     double totalPurchases = 0;
     double totalDeposits = 0;
     double totalProfit = 0;
@@ -504,15 +522,9 @@ class PdfService {
         mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
         children: [
           _buildFinancialItem(
-            'إجمالي الربح',
-            Formatters.currency(totalProfit),
-            const PdfColor.fromInt(0xFF4CAF50),
-            arabicFont,
-          ),
-          _buildFinancialItem(
-            'إجمالي الإيداع',
-            Formatters.number(totalDeposits),
-            const PdfColor.fromInt(0xFFFF9800),
+            'عدد المعاملات',
+            '${clients.length}',
+            const PdfColor.fromInt(0xFFD4AF37),
             arabicFont,
           ),
           _buildFinancialItem(
@@ -522,9 +534,15 @@ class PdfService {
             arabicFont,
           ),
           _buildFinancialItem(
-            'عدد المعاملات',
-            '${clients.length}',
-            const PdfColor.fromInt(0xFFD4AF37),
+            'إجمالي الإيداع',
+            Formatters.number(totalDeposits),
+            const PdfColor.fromInt(0xFFFF9800),
+            arabicFont,
+          ),
+          _buildFinancialItem(
+            'إجمالي الربح',
+            Formatters.currency(totalProfit),
+            const PdfColor.fromInt(0xFF4CAF50),
             arabicFont,
           ),
         ],
@@ -532,29 +550,30 @@ class PdfService {
     );
   }
 
-  static pw.Widget _buildAllClientsTable(
-      List<Client> clients, pw.Font arabicFont) {
+  static pw.Widget _buildAllClientsTable(List<Client> clients, pw.Font arabicFont) {
+    // الترتيب: من اليمين لليسار (RTL)
+    // العمود 0 = # ، 1 = الاسم ، 2 = البطاقة ، 3 = المصرف ، 4 = الشراء ، 5 = الإيداع ، 6 = الدولار ، 7 = الربح
+    final headers = ['#', 'الاسم', 'البطاقة', 'المصرف', 'الشراء', 'الإيداع', 'الدولار', 'الربح'];
+
     return pw.Table(
       border: pw.TableBorder.all(color: const PdfColor.fromInt(0xFFEEEEEE)),
       columnWidths: {
-        0: const pw.FlexColumnWidth(0.4), // #
-        1: const pw.FlexColumnWidth(1.4), // الاسم
-        2: const pw.FlexColumnWidth(1.0), // البطاقة
-        3: const pw.FlexColumnWidth(0.8), // المصرف
-        4: const pw.FlexColumnWidth(0.8), // الشراء
-        5: const pw.FlexColumnWidth(0.8), // الإيداع
-        6: const pw.FlexColumnWidth(0.7), // الدولار
-        7: const pw.FlexColumnWidth(0.8), // الربح
+        0: const pw.FlexColumnWidth(0.4),  // #
+        1: const pw.FlexColumnWidth(1.4),  // الاسم
+        2: const pw.FlexColumnWidth(1.0),  // البطاقة
+        3: const pw.FlexColumnWidth(0.8),  // المصرف
+        4: const pw.FlexColumnWidth(0.8),  // الشراء
+        5: const pw.FlexColumnWidth(0.8),  // الإيداع
+        6: const pw.FlexColumnWidth(0.7),  // الدولار
+        7: const pw.FlexColumnWidth(0.8),  // الربح
       },
       children: [
-        // Header
+        // Header Row
         pw.TableRow(
           decoration: const pw.BoxDecoration(
             color: PdfColor.fromInt(0xFFFFF8E1),
           ),
-          children:
-              ['الربح', 'الدولار', 'الإيداع', 'الشراء', 'المصرف', 'البطاقة', 'الاسم', '#']
-                  .map((h) {
+          children: headers.map((h) {
             return pw.Container(
               padding: const pw.EdgeInsets.all(6),
               child: pw.Text(
@@ -565,32 +584,35 @@ class PdfService {
                   font: arabicFont,
                   fontWeight: pw.FontWeight.bold,
                   fontSize: 8,
+                  color: const PdfColor.fromInt(0xFF333333),
                 ),
               ),
             );
           }).toList(),
         ),
-        // Data
+        // Data Rows
         ...clients.asMap().entries.map((entry) {
           final idx = entry.key + 1;
           final c = entry.value;
           return pw.TableRow(
             decoration: idx.isOdd
-                ? const pw.BoxDecoration(
-                    color: PdfColor.fromInt(0xFFFAFAFA))
+                ? const pw.BoxDecoration(color: PdfColor.fromInt(0xFFFAFAFA))
                 : null,
             children: [
-              _tableCell(Formatters.number(c.profit), arabicFont,
-                  color: c.profit >= 0
-                      ? const PdfColor.fromInt(0xFF4CAF50)
-                      : const PdfColor.fromInt(0xFFFF5252)),
-              _tableCell(Formatters.number(c.dollarAmount), arabicFont),
-              _tableCell(Formatters.number(c.deposit), arabicFont),
-              _tableCell(Formatters.number(c.purchasePrice), arabicFont),
-              _tableCell(c.bankName ?? '-', arabicFont),
-              _tableCell(c.bankCardNumber, arabicFont),
-              _tableCell(c.fullName, arabicFont),
               _tableCell('$idx', arabicFont),
+              _tableCell(c.fullName, arabicFont),
+              _tableCell(c.bankCardNumber, arabicFont),
+              _tableCell(c.bankName ?? '-', arabicFont),
+              _tableCell(Formatters.number(c.purchasePrice), arabicFont),
+              _tableCell(Formatters.number(c.deposit), arabicFont),
+              _tableCell(Formatters.number(c.dollarAmount), arabicFont),
+              _tableCell(
+                Formatters.number(c.profit),
+                arabicFont,
+                color: c.profit >= 0
+                    ? const PdfColor.fromInt(0xFF4CAF50)
+                    : const PdfColor.fromInt(0xFFFF5252),
+              ),
             ],
           );
         }),
@@ -598,8 +620,7 @@ class PdfService {
     );
   }
 
-  static pw.Widget _tableCell(String text, pw.Font arabicFont,
-      {PdfColor? color}) {
+  static pw.Widget _tableCell(String text, pw.Font arabicFont, {PdfColor? color}) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(6),
       child: pw.Text(
