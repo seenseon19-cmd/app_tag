@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart'; // قم بإزالة التعليق بعد إنشاء الملف
 import 'services/hive_service.dart';
 import 'services/firestore_service.dart';
 import 'theme/app_theme.dart';
@@ -35,11 +34,21 @@ void main() async {
 
   // Initialize Firebase (works on all platforms now!)
   try {
-    // If you have firebase_options.dart, you should pass options:
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
-    await Firebase.initializeApp();
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyDvpvmHqSTrKS0GKi76qCzguCqh13j6B5A",
+          authDomain: "taj-exchange.firebaseapp.com",
+          projectId: "taj-exchange",
+          storageBucket: "taj-exchange.firebasestorage.app",
+          messagingSenderId: "783730722509",
+          appId: "1:783730722509:web:b23a8f7d70302deb430b84",
+          measurementId: "G-MQJRXGCBW2",
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
     await FirestoreService.syncLocalToCloud();
   } catch (e) {
     debugPrint('Firebase init error: $e');
