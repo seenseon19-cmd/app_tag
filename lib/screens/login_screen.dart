@@ -149,14 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 prefixIcon: Icon(Icons.email_outlined, color: AppColors.gold),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              'بيانات الدخول الافتراضية:\nاسم المستخدم: admin\nكلمة المرور: 1234',
-              style: TextStyle(
-                color: AppColors.textMuted.withAlpha(180),
-                fontSize: 12,
-              ),
-            ),
+
           ],
         ),
         actions: [
@@ -442,34 +435,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         .animate()
                         .fadeIn(delay: 700.ms, duration: 500.ms),
 
-                    const SizedBox(height: 30),
 
-                    // Default credentials hint
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.backgroundElevated.withAlpha(150),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.gold.withAlpha(25)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.info_outline_rounded,
-                              color: AppColors.textMuted.withAlpha(150),
-                              size: 16),
-                          const SizedBox(width: 8),
-                          Text(
-                            'المستخدم: admin  |  كلمة المرور: 1234',
-                            style: TextStyle(
-                              color: AppColors.textMuted.withAlpha(180),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).animate().fadeIn(delay: 900.ms, duration: 500.ms),
                   ],
                 ),
               ),
