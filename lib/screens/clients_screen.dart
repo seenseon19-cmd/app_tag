@@ -44,19 +44,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // On web, use Hive directly instead of Firestore
-    if (kIsWeb) {
-      return ValueListenableBuilder(
-        valueListenable: HiveService.clientsBox.listenable(),
-        builder: (context, Box<Client> box, _) {
-          final allClients = box.values.toList();
-          allClients.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          return _buildScreenContent(allClients, isConnected: false);
-        },
-      );
-    }
-
-    // On mobile/desktop, use Firestore stream
+    // Use Firestore stream for all platforms, fallback to Hive if no internet
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirestoreService.getClientsStream(),
       builder: (context, snapshot) {

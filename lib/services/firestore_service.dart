@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../models/client_model.dart';
 import 'hive_service.dart';
 
@@ -8,7 +9,8 @@ import 'hive_service.dart';
 ///   - Offline-first local storage via Hive
 ///   - Automatic data migration from Hive to Firestore
 class FirestoreService {
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  static bool get _isInitialized => Firebase.apps.isNotEmpty;
 
   /// The collection name for clients in Firestore
   static const String _collectionName = 'clients';
@@ -22,6 +24,7 @@ class FirestoreService {
   /// Add a new client to Cloud Firestore.
   /// Uses the client's UUID as the document ID to keep Hive and Firestore in sync.
   static Future<void> addClient(Client client) async {
+    if (!_isInitialized) return;
     await _clientsCollection.doc(client.id).set(_clientToMap(client));
   }
 
@@ -29,6 +32,7 @@ class FirestoreService {
 
   /// Update an existing client in Cloud Firestore.
   static Future<void> updateClient(Client client) async {
+    if (!_isInitialized) return;
     await _clientsCollection.doc(client.id).update(_clientToMap(client));
   }
 
@@ -36,6 +40,7 @@ class FirestoreService {
 
   /// Delete a client from Cloud Firestore by ID.
   static Future<void> deleteClient(String id) async {
+    if (!_isInitialized) return;
     await _clientsCollection.doc(id).delete();
   }
 
@@ -44,6 +49,7 @@ class FirestoreService {
   /// Returns a real-time stream of all clients, ordered by creation date (newest first).
   /// Use this with StreamBuilder for automatic UI updates when data changes on any device.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getClientsStream() {
+    if (!_isInitialized) return const Stream.empty();
     return _clientsCollection
         .orderBy('createdAt', descending: true)
         .snapshots();
@@ -51,6 +57,7 @@ class FirestoreService {
 
   /// Returns a one-time fetch of all clients (not real-time).
   static Future<List<Client>> getAllClients() async {
+    if (!_isInitialized) return [];
     final snapshot = await _clientsCollection
         .orderBy('createdAt', descending: true)
         .get();
@@ -75,6 +82,7 @@ class FirestoreService {
   /// Only uploads clients that don't already exist in Firestore.
   /// Called on app startup to ensure no data is lost during the transition.
   static Future<void> syncLocalToCloud() async {
+    if (!_isInitialized) return;
     try {
       final localClients = HiveService.getAllClients();
       if (localClients.isEmpty) return;
@@ -107,6 +115,7 @@ class FirestoreService {
 
   /// Get total number of clients from Firestore.
   static Future<int> getTotalClientsCount() async {
+    if (!_isInitialized) return 0;
     final snapshot = await _clientsCollection.count().get();
     return snapshot.count ?? 0;
   }

@@ -50,8 +50,8 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
             onPressed: () async {
               // Delete from Hive (local)
               await HiveService.deleteClient(client.id);
-              // Delete from Cloud Firestore (skip on web)
-              if (!kIsWeb) await FirestoreService.deleteClient(client.id);
+              // Delete from Cloud Firestore
+              await FirestoreService.deleteClient(client.id);
               if (mounted) {
                 Navigator.of(context).pop(); // close dialog
                 Navigator.of(context).pop(); // close detail

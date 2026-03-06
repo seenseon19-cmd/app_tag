@@ -559,7 +559,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: _exportPdf,
               ).animate().fadeIn(delay: 250.ms, duration: 300.ms),
 
-              // Hide CSV export on web (not supported)
               if (!kIsWeb)
                 _buildSettingsTile(
                   icon: Icons.table_chart_rounded,

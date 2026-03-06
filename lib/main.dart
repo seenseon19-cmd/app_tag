@@ -32,14 +32,14 @@ void main() async {
   // Initialize Hive (local storage)
   await HiveService.init();
 
-  // Initialize Firebase (skip on web if no web config)
-  if (!kIsWeb) {
-    try {
-      await Firebase.initializeApp();
-      await FirestoreService.syncLocalToCloud();
-    } catch (e) {
-      debugPrint('Firebase init error: $e');
-    }
+  // Initialize Firebase (works on all platforms now!)
+  try {
+    // If you have firebase_options.dart, you should pass options:
+    // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp();
+    await FirestoreService.syncLocalToCloud();
+  } catch (e) {
+    debugPrint('Firebase init error: $e');
   }
 
   runApp(const TajExchangeApp());

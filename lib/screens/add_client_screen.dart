@@ -253,8 +253,8 @@ class _AddClientScreenState extends State<AddClientScreen> {
 
         // Save to Hive (local)
         await HiveService.updateClient(client);
-        // Sync to Cloud Firestore (skip on web)
-        if (!kIsWeb) await FirestoreService.updateClient(client);
+        // Sync to Cloud Firestore
+        await FirestoreService.updateClient(client);
       } else {
         final client = Client(
           id: HiveService.generateId(),
@@ -282,8 +282,8 @@ class _AddClientScreenState extends State<AddClientScreen> {
 
         // Save to Hive (local)
         await HiveService.addClient(client);
-        // Sync to Cloud Firestore (skip on web)
-        if (!kIsWeb) await FirestoreService.addClient(client);
+        // Sync to Cloud Firestore
+        await FirestoreService.addClient(client);
       }
 
       if (mounted) {
@@ -659,37 +659,47 @@ class _AddClientScreenState extends State<AddClientScreen> {
               child: SafeArea(
                 child: SizedBox(
                   width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton.icon(
+                  // إزالة الارتفاع الثابت (height: 52) للسماح للزر بالتمدد إذا لزم الأمر
+                  child: ElevatedButton(
                     onPressed: _isSaving ? null : _saveClient,
-                    icon: _isSaving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: AppColors.backgroundDark,
-                            ),
-                          )
-                        : Icon(_isEditing
-                            ? Icons.save_rounded
-                            : Icons.check_circle_rounded),
-                    label: Text(
-                      _isEditing ? 'حفظ التعديلات' : 'حفظ المعاملة',
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.gold,
                       foregroundColor: AppColors.backgroundDark,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                       elevation: 6,
                       shadowColor: AppColors.gold.withAlpha(80),
                     ),
+                    child: _isSaving
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: AppColors.backgroundDark,
+                            ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(_isEditing
+                                  ? Icons.save_rounded
+                                  : Icons.check_circle_rounded),
+                              const SizedBox(width: 8),
+                              Flexible( // لجعل النص يلتف أو يصغر في الشاشات الضيقة بدل القص
+                                child: Text(
+                                  _isEditing ? 'حفظ التعديلات' : 'حفظ المعاملة',
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ),
