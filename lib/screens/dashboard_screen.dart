@@ -58,26 +58,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // شعار التطبيق
           Container(
-            padding: const EdgeInsets.all(30),
+            width: 110,
+            height: 110,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.gold.withAlpha(30),
-                  AppColors.gold.withAlpha(10),
-                ],
+              border: Border.all(
+                color: AppColors.gold.withAlpha(160),
+                width: 2.5,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.gold.withAlpha(60),
+                  blurRadius: 24,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
-            child: const Icon(
-              Icons.dashboard_rounded,
-              size: 80,
-              color: AppColors.gold,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/app_icon.jpg',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(height: 24),
           Text(
-            'لوحة التحكم',
+            'تاج الصرافة 💎',
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: 8),
@@ -108,25 +116,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // Header
         Row(
           children: [
+            // شعار التطبيق الدائري
             Container(
-              padding: const EdgeInsets.all(8),
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.gold.withAlpha(60)),
+                border: Border.all(
+                  color: AppColors.gold.withAlpha(180),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.gold.withAlpha(80),
+                    blurRadius: 16,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
-              child: const Icon(
-                Icons.diamond_outlined,
-                color: AppColors.gold,
-                size: 22,
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/app_icon.jpg',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'لوحة التحكم 💎',
+                    'تاج الصرافة 💎',
                     style: Theme.of(context)
                         .textTheme
                         .headlineLarge

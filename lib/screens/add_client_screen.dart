@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:intl/intl.dart' hide TextDirection;
 import '../theme/app_theme.dart';
 import '../models/client_model.dart';
@@ -252,8 +253,8 @@ class _AddClientScreenState extends State<AddClientScreen> {
 
         // Save to Hive (local)
         await HiveService.updateClient(client);
-        // Sync to Cloud Firestore
-        await FirestoreService.updateClient(client);
+        // Sync to Cloud Firestore (skip on web)
+        if (!kIsWeb) await FirestoreService.updateClient(client);
       } else {
         final client = Client(
           id: HiveService.generateId(),
@@ -281,8 +282,8 @@ class _AddClientScreenState extends State<AddClientScreen> {
 
         // Save to Hive (local)
         await HiveService.addClient(client);
-        // Sync to Cloud Firestore
-        await FirestoreService.addClient(client);
+        // Sync to Cloud Firestore (skip on web)
+        if (!kIsWeb) await FirestoreService.addClient(client);
       }
 
       if (mounted) {

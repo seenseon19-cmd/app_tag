@@ -1,10 +1,8 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../models/client_model.dart';
 import '../utils/formatters.dart';
 
@@ -35,45 +33,20 @@ class PdfService {
     );
   }
 
-  // ===== Single Client PDF (share via WhatsApp) =====
+  // ===== Single Client PDF (share) =====
   static Future<void> shareClientPdf(Client client) async {
     final pdf = await _buildClientPdf(client);
     final bytes = await pdf.save();
 
-    final dir = await getTemporaryDirectory();
-    final file = File(
-        '${dir.path}/تقرير_${client.fullName}_${Formatters.date(DateTime.now())}.pdf');
-    await file.writeAsBytes(bytes);
-
-    await SharePlus.instance.share(
-      ShareParams(
-        files: [XFile(file.path)],
-        text: '💎 تقرير العميل: ${client.fullName} - تاج الصرافة',
-      ),
+    await Printing.sharePdf(
+      bytes: bytes,
+      filename: 'تقرير_${client.fullName}_${Formatters.date(DateTime.now())}.pdf',
     );
   }
 
   // ===== All Clients PDF =====
   static Future<void> generateAllClientsReport(List<Client> clients) async {
-    final pdf = pw.Document();
-    final arabicFont = await _loadArabicFont();
-
-    pdf.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4.landscape,
-        textDirection: pw.TextDirection.rtl,
-        margin: const pw.EdgeInsets.all(30),
-        theme: pw.ThemeData.withFont(base: arabicFont, bold: arabicFont),
-        header: (context) => _buildAllClientsHeader(arabicFont),
-        footer: (context) => _buildFooter(context, arabicFont),
-        build: (context) => [
-          pw.SizedBox(height: 10),
-          _buildAllClientsSummary(clients, arabicFont),
-          pw.SizedBox(height: 20),
-          _buildAllClientsTable(clients, arabicFont),
-        ],
-      ),
-    );
+    final pdf = await _buildAllClientsPdf(clients);
 
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
@@ -83,6 +56,17 @@ class PdfService {
 
   // ===== Share All Clients PDF =====
   static Future<void> shareAllClientsPdf(List<Client> clients) async {
+    final pdf = await _buildAllClientsPdf(clients);
+    final bytes = await pdf.save();
+
+    await Printing.sharePdf(
+      bytes: bytes,
+      filename: 'جميع_المعاملات_${Formatters.date(DateTime.now())}.pdf',
+    );
+  }
+
+  // ===== Build All Clients PDF Document =====
+  static Future<pw.Document> _buildAllClientsPdf(List<Client> clients) async {
     final pdf = pw.Document();
     final arabicFont = await _loadArabicFont();
 
@@ -103,18 +87,7 @@ class PdfService {
       ),
     );
 
-    final bytes = await pdf.save();
-    final dir = await getTemporaryDirectory();
-    final file = File(
-        '${dir.path}/جميع_المعاملات_${Formatters.date(DateTime.now())}.pdf');
-    await file.writeAsBytes(bytes);
-
-    await SharePlus.instance.share(
-      ShareParams(
-        files: [XFile(file.path)],
-        text: '💎 تقرير جميع المعاملات - تاج الصرافة',
-      ),
-    );
+    return pdf;
   }
 
   // ===== Build Single Client PDF =====

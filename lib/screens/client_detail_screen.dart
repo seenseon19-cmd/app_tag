@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
 import '../theme/app_theme.dart';
@@ -49,8 +50,8 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
             onPressed: () async {
               // Delete from Hive (local)
               await HiveService.deleteClient(client.id);
-              // Delete from Cloud Firestore
-              await FirestoreService.deleteClient(client.id);
+              // Delete from Cloud Firestore (skip on web)
+              if (!kIsWeb) await FirestoreService.deleteClient(client.id);
               if (mounted) {
                 Navigator.of(context).pop(); // close dialog
                 Navigator.of(context).pop(); // close detail

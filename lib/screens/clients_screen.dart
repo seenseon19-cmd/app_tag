@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../theme/app_theme.dart';
 import '../models/client_model.dart';
 import '../services/firestore_service.dart';
@@ -42,40 +44,51 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Use StreamBuilder with Cloud Firestore for real-time sync across devices.
-    // When data is added/updated/deleted from ANY device, the UI updates instantly.
+    // On web, use Hive directly instead of Firestore
+    if (kIsWeb) {
+      return ValueListenableBuilder(
+        valueListenable: HiveService.clientsBox.listenable(),
+        builder: (context, Box<Client> box, _) {
+          final allClients = box.values.toList();
+          allClients.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return _buildScreenContent(allClients, isConnected: false);
+        },
+      );
+    }
+
+    // On mobile/desktop, use Firestore stream
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirestoreService.getClientsStream(),
       builder: (context, snapshot) {
-        // Show loading indicator while waiting for first data
         if (snapshot.connectionState == ConnectionState.waiting &&
             !snapshot.hasData) {
           return Scaffold(
             body: Container(
               decoration: const BoxDecoration(gradient: AppColors.darkGradient),
               child: const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.gold,
-                ),
+                child: CircularProgressIndicator(color: AppColors.gold),
               ),
             ),
           );
         }
 
-        // Handle errors gracefully — fall back to local Hive data
         List<Client> allClients;
         if (snapshot.hasError || !snapshot.hasData) {
-          // Fallback: read from local Hive storage
           allClients = HiveService.getAllClients();
           allClients.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         } else {
-          // Convert Firestore documents to Client objects
           allClients = snapshot.data!.docs
               .map((doc) => FirestoreService.clientFromSnapshot(doc))
               .toList();
         }
 
-        final clients = _filterClients(allClients);
+        return _buildScreenContent(allClients, isConnected: snapshot.hasData);
+      },
+    );
+  }
+
+  Widget _buildScreenContent(List<Client> allClients, {required bool isConnected}) {
+    final clients = _filterClients(allClients);
 
         return Scaffold(
           body: Container(
@@ -125,19 +138,19 @@ class _ClientsScreenState extends State<ClientsScreen> {
                                   const SizedBox(width: 8),
                                   // Cloud sync indicator
                                   Icon(
-                                    snapshot.hasData
+                                    isConnected
                                         ? Icons.cloud_done_rounded
                                         : Icons.cloud_off_rounded,
                                     size: 14,
-                                    color: snapshot.hasData
+                                    color: isConnected
                                         ? AppColors.success
                                         : AppColors.warning,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    snapshot.hasData ? 'متصل' : 'غير متصل',
+                                    isConnected ? 'متصل' : 'غير متصل',
                                     style: TextStyle(
-                                      color: snapshot.hasData
+                                      color: isConnected
                                           ? AppColors.success
                                           : AppColors.warning,
                                       fontSize: 10,
@@ -232,8 +245,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
             child: const Icon(Icons.add_rounded,
                 color: AppColors.backgroundDark),
           ),
-        );
-      },
     );
   }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
@@ -165,6 +166,10 @@ class HiveService {
 
   // ========== Export ==========
   static Future<String> exportToCsv() async {
+    if (kIsWeb) {
+      throw UnsupportedError('تصدير CSV غير مدعوم على الويب. استخدم تصدير PDF بدلاً منه.');
+    }
+
     final clients = getAllClients();
     final buffer = StringBuffer();
     // BOM for Arabic support in Excel

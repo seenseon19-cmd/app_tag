@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
 import '../theme/app_theme.dart';
@@ -558,23 +559,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: _exportPdf,
               ).animate().fadeIn(delay: 250.ms, duration: 300.ms),
 
-              _buildSettingsTile(
-                icon: Icons.table_chart_rounded,
-                title: 'تصدير كـ CSV',
-                subtitle: 'بيانات قابلة للفتح في Excel',
-                color: const Color(0xFF217346),
-                trailing: _isExporting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.gold,
-                        ),
-                      )
-                    : null,
-                onTap: _isExporting ? null : _exportCsv,
-              ).animate().fadeIn(delay: 300.ms, duration: 300.ms),
+              // Hide CSV export on web (not supported)
+              if (!kIsWeb)
+                _buildSettingsTile(
+                  icon: Icons.table_chart_rounded,
+                  title: 'تصدير كـ CSV',
+                  subtitle: 'بيانات قابلة للفتح في Excel',
+                  color: const Color(0xFF217346),
+                  trailing: _isExporting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.gold,
+                          ),
+                        )
+                      : null,
+                  onTap: _isExporting ? null : _exportCsv,
+                ).animate().fadeIn(delay: 300.ms, duration: 300.ms),
 
               const SizedBox(height: 16),
 
