@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'services/hive_service.dart';
 import 'services/firestore_service.dart';
@@ -10,30 +11,36 @@ import 'screens/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set preferred orientations
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Set preferred orientations (skip on web)
+  if (!kIsWeb) {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-  // Set system UI style
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: AppColors.backgroundDark,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ),
-  );
+    // Set system UI style
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: AppColors.backgroundDark,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+    );
+  }
 
   // Initialize Hive (local storage)
   await HiveService.init();
 
-  // Initialize Firebase (cloud synchronization)
-  await Firebase.initializeApp();
-
-  // Sync existing local Hive data to Firestore (first-time migration)
-  await FirestoreService.syncLocalToCloud();
+  // Initialize Firebase (skip on web if no web config)
+  if (!kIsWeb) {
+    try {
+      await Firebase.initializeApp();
+      await FirestoreService.syncLocalToCloud();
+    } catch (e) {
+      debugPrint('Firebase init error: $e');
+    }
+  }
 
   runApp(const TajExchangeApp());
 }
