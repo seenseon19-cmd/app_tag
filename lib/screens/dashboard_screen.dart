@@ -243,13 +243,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: PieChart(
                     PieChartData(
                       sectionsSpace: 3,
-                      centerSpaceRadius: 35,
+                      centerSpaceRadius: 30, // Reducded center radius
                       sections: [
                         PieChartSectionData(
                           value: totalDeposits > 0 ? totalDeposits : 1,
                           title: '',
                           color: AppColors.warning,
-                          radius: 55,
+                          radius: 50, // Reduced radius
                           badgeWidget: _buildPieBadge(
                               Icons.payments_rounded, AppColors.warning),
                           badgePositionPercentageOffset: 1.2,
@@ -258,7 +258,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           value: totalProfit > 0 ? totalProfit : 1,
                           title: '',
                           color: AppColors.success,
-                          radius: 60,
+                          radius: 55, // Reduced radius
                           badgeWidget: _buildPieBadge(
                               Icons.trending_up_rounded, AppColors.success),
                           badgePositionPercentageOffset: 1.2,
@@ -293,12 +293,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        Formatters.currency(totalPurchases),
-                        style: const TextStyle(
-                          color: AppColors.gold,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                      FittedBox(
+                        child: Text(
+                          Formatters.currency(totalPurchases),
+                          style: const TextStyle(
+                            color: AppColors.gold,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ],
@@ -455,12 +457,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   fontSize: 11,
                 ),
               ),
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+              FittedBox(
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ],
@@ -526,16 +530,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
+              reservedSize: 38,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index >= 0 && index < monthLabels.length) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      monthLabels[index],
-                      style: const TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 10,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        monthLabels[index],
+                        style: const TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   );

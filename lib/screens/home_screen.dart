@@ -81,34 +81,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                   const SizedBox(width: 12),
                   // اسم التطبيق
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'تاج الصرافة',
-                        style: TextStyle(
-                          color: AppColors.gold,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 17,
-                          letterSpacing: 0.5,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'تاج الصرافة',
+                          style: TextStyle(
+                            color: AppColors.gold,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 17,
+                            letterSpacing: 0.5,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        'نظام إدارة المعاملات المالية',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w400,
+                        const Text(
+                          'نظام إدارة المعاملات المالية',
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
-                  ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideX(
-                        begin: -0.1,
-                        end: 0,
-                        duration: 400.ms,
-                      ),
-                  const Spacer(),
+                      ],
+                    ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideX(
+                          begin: -0.1,
+                          end: 0,
+                          duration: 400.ms,
+                        ),
+                  ),
+                  const SizedBox(width: 8),
                   // مؤشر الصفحة الحالية بشكل أنيق
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

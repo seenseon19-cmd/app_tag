@@ -485,23 +485,32 @@ ${client.note != null ? '\n📝 *ملاحظة:* ${client.note}' : ''}
             // ===== Share / Export Buttons =====
             SizedBox(
               width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                 onPressed: () => _showShareOptions(client),
-                icon: const Icon(Icons.share_rounded),
-                label: const Text(
-                  'مشاركة / تصدير PDF',
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w700),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.gold,
                   foregroundColor: AppColors.backgroundDark,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
                   elevation: 6,
                   shadowColor: AppColors.gold.withAlpha(80),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.share_rounded),
+                    SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'مشاركة / تصدير PDF',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             )
@@ -514,22 +523,31 @@ ${client.note != null ? '\n📝 *ملاحظة:* ${client.note}' : ''}
             // WhatsApp direct button
             SizedBox(
               width: double.infinity,
-              height: 50,
-              child: OutlinedButton.icon(
+              child: OutlinedButton(
                 onPressed: () => _shareViaWhatsApp(client),
-                icon: const Icon(Icons.send_rounded, size: 20),
-                label: const Text(
-                  'إرسال عبر WhatsApp مباشرة',
-                  style: TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w600),
-                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.success,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   side: const BorderSide(
                       color: AppColors.success, width: 1.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.send_rounded, size: 20),
+                    SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'إرسال عبر WhatsApp مباشرة',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             )
